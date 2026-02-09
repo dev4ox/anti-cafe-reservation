@@ -1,0 +1,63 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Настройки</h1>
+    <form method="post" enctype="multipart/form-data" class="vstack gap-2 mb-4">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+
+    <h2 class="h5">График недели</h2>
+    <a class="btn btn-sm btn-outline-primary mb-2" href="/staff/settings/weekly/new/">Добавить</a>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>День</th>
+          <th>Открыто</th>
+          <th>Открытие</th>
+          <th>Закрытие</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in weekly %}
+          <tr>
+            <td>{{ item.day_of_week }}</td>
+            <td>{{ item.is_open }}</td>
+            <td>{{ item.open_time }}</td>
+            <td>{{ item.close_time }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">Нет записей.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2 class="h5 mt-4">Особые дни</h2>
+    <a class="btn btn-sm btn-outline-primary mb-2" href="/staff/settings/special/new/">Добавить</a>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Открыто</th>
+          <th>Открытие</th>
+          <th>Закрытие</th>
+          <th>Примечание</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in specials %}
+          <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.is_open }}</td>
+            <td>{{ item.open_time }}</td>
+            <td>{{ item.close_time }}</td>
+            <td>{{ item.note }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">Нет записей.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

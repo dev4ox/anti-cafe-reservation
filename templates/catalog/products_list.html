@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block content %}
+  <section class="page-hero">
+    <div>
+      <div class="eyebrow">Меню</div>
+      <h1 class="page-title">Напитки и закуски</h1>
+      <p class="lead">Подберите вкусное дополнение к вашему вечеру.</p>
+    </div>
+  </section>
+  <div class="row g-3">
+    {% for product in products %}
+      <div class="col-md-4">
+        <div class="card h-100">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ product.title }}</h5>
+            <p class="card-text">{{ product.description }}</p>
+            <div class="fw-bold">{{ product.price }} </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Пока нет доступных продуктов.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

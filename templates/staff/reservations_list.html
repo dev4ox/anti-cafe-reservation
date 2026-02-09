@@ -1,0 +1,55 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Бронирования</h1>
+    <form method="get" class="row g-2 mb-3">
+      <div class="col-auto">
+        <input class="form-control" type="date" name="date" value="{{ selected_date }}">
+      </div>
+      <div class="col-auto">
+        <select class="form-select" name="status">
+          <option value="">Все статусы</option>
+          {% for code, label in status_choices %}
+            <option value="{{ code }}" {% if code == request.GET.status %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-outline-primary" type="submit">Фильтровать</button>
+      </div>
+    </form>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Время</th>
+          <th>Стол</th>
+          <th>Имя</th>
+          <th>Статус</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reservation in reservations %}
+          <tr>
+            <td>{{ reservation.start_time|time:"H:i" }}</td>
+            <td>{{ reservation.table.name }}</td>
+            <td>{{ reservation.customer_name }}</td>
+            <td>{{ reservation.get_status_display }}</td>
+            <td>
+              <form method="post" action="/staff/reservations/{{ reservation.id }}/status/">
+                {% csrf_token %}
+                <select class="form-select form-select-sm" name="status" onchange="this.form.submit()">
+                  {% for code, label in status_choices %}
+                    <option value="{{ code }}" {% if reservation.status == code %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">Нет бронирований.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

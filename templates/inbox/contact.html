@@ -1,0 +1,29 @@
+﻿{% extends "base.html" %}
+{% block content %}
+  <section class="page-hero">
+    <div>
+      <div class="eyebrow">Контакты</div>
+      <h1 class="page-title">Связаться с нами</h1>
+      <p class="lead">Оставьте сообщение, и мы быстро ответим.</p>
+    </div>
+  </section>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="form-card">
+        <form method="post" class="vstack gap-2">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button class="btn btn-primary" type="submit">Отправить</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="soft-card p-4 h-100">
+        <h5>Наши контакты</h5>
+        <p>{{ site_settings.address }}</p>
+        <p>{{ site_settings.phone }}</p>
+        <a class="btn btn-outline-primary" href="/booking/">Забронировать стол</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

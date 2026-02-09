@@ -1,0 +1,33 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Продукты</h1>
+    <form method="post" enctype="multipart/form-data" class="vstack gap-2 mb-3">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Добавить</button>
+    </form>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Цена</th>
+          <th>Доступен</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          <tr>
+            <td>{{ product.title }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.is_available }}</td>
+            <td><a class="btn btn-sm btn-outline-primary" href="/staff/catalog/products/{{ product.id }}/">Редактировать</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">Нет продуктов.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

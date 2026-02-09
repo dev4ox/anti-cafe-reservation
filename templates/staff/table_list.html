@@ -1,0 +1,36 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Столы</h1>
+    <form method="post" class="row g-2 mb-3">
+      {% csrf_token %}
+      <div class="col-md-3">{{ form.name }}</div>
+      <div class="col-md-2">{{ form.capacity }}</div>
+      <div class="col-md-3">{{ form.location_note }}</div>
+      <div class="col-md-2">{{ form.is_active }}</div>
+      <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Добавить</button></div>
+    </form>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Вместимость</th>
+          <th>Активен</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for table in tables %}
+          <tr>
+            <td>{{ table.name }}</td>
+            <td>{{ table.capacity }}</td>
+            <td>{{ table.is_active }}</td>
+            <td><a class="btn btn-sm btn-outline-primary" href="/staff/tables/{{ table.id }}/">Редактировать</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">Нет столов.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

@@ -1,0 +1,91 @@
+﻿{% extends "base.html" %}
+{% block content %}
+  <section class="page-hero">
+    <div>
+      <div class="eyebrow">Бронирование</div>
+      <h1 class="page-title">Забронируйте стол онлайн</h1>
+      <p class="lead">Выберите дату, длительность и время. Мы покажем доступные столы.</p>
+    </div>
+  </section>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="form-card">
+        <h5 class="mb-3">Шаг 1: параметры визита</h5>
+        <form method="get" class="vstack gap-2">
+          {{ availability_form.as_p }}
+          <button class="btn btn-outline-primary" type="submit">Показать доступное время</button>
+        </form>
+      </div>
+      {% if available_tables %}
+        <div class="mt-4">
+          <h6>Выберите стол</h6>
+          <div class="d-flex flex-wrap gap-2">
+            {% for table in available_tables %}
+              <a class="btn btn-sm {% if selected_table == table.id %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                 href="?date={{ availability_data.date|date:'Y-m-d' }}&duration_minutes={{ availability_data.duration_minutes }}&seats={{ availability_data.seats }}&start_time={{ selected_time|time:'H:i' }}&table={{ table.id }}">
+                {{ table.name }} · до {{ table.capacity }} мест
+              </a>
+            {% empty %}
+              <div class="text-muted">Нет доступных столов на выбранное время.</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% if selected_table %}
+        {% if available_times %}
+          <div class="mt-4">
+            <h6>Теперь выберите время</h6>
+          </div>
+        {% else %}
+          <div class="text-muted mt-3">Нет доступного времени для выбранного стола.</div>
+        {% endif %}
+      {% endif %}
+      {% if available_times %}
+        <div class="mt-3">
+          <h6>Доступное время</h6>
+          <div class="d-flex flex-wrap gap-2 time-chips">
+            {% for time in available_times %}
+              <a class="btn btn-sm btn-outline-secondary"
+                 href="?date={{ availability_data.date|date:'Y-m-d' }}&duration_minutes={{ availability_data.duration_minutes }}&seats={{ availability_data.seats }}&table={{ selected_table }}&start_time={{ time|time:'H:i' }}">
+                {{ time|time:'H:i' }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-lg-7">
+      <div class="form-card">
+        <h5 class="mb-3">Шаг 2: данные бронирования</h5>
+        {% if site_settings.deposit_required %}
+          <div class="alert alert-warning">Депозит: {{ site_settings.deposit_amount }} {{ site_settings.currency }}</div>
+        {% endif %}
+        {% if reservation_form and selected_table and selected_time %}
+          <div class="soft-card p-3 mb-3">
+            <div class="fw-semibold">Параметры визита</div>
+            <div class="small text-muted">
+              Дата: {{ availability_data.date|date:"d.m.Y" }} ·
+              Время: {{ selected_time|time:"H:i" }} ·
+              Длительность: {{ availability_data.duration_minutes }} мин ·
+              Мест: {{ availability_data.seats }}
+              {% if selected_table_obj %}
+                · Стол: {{ selected_table_obj.name }}
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+        {% if reservation_form and selected_table and selected_time %}
+          <form method="post" action="/booking/new/" class="vstack gap-2">
+            {% csrf_token %}
+            {{ reservation_form.as_p }}
+            <button class="btn btn-primary" type="submit">Забронировать</button>
+          </form>
+        {% elif reservation_form and selected_table %}
+          <div class="text-muted">Выберите время из списка слева, чтобы продолжить.</div>
+        {% else %}
+          <div class="text-muted">Выберите дату, длительность и количество мест, затем стол и время.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

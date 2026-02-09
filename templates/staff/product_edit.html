@@ -1,0 +1,11 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Редактировать продукт: {{ product.title }}</h1>
+    <form method="post" enctype="multipart/form-data" class="vstack gap-2">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+  </section>
+{% endblock %}

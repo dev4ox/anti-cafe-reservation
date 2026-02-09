@@ -1,0 +1,31 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Сегодня: {{ today }}</h1>
+    <a class="btn btn-outline-primary mb-3" href="/staff/reservations/manual/">Создать бронь</a>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Время</th>
+          <th>Стол</th>
+          <th>Мест</th>
+          <th>Имя</th>
+          <th>Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reservation in reservations %}
+          <tr>
+            <td>{{ reservation.start_time|time:"H:i" }}</td>
+            <td>{{ reservation.table.name }}</td>
+            <td>{{ reservation.seats }}</td>
+            <td>{{ reservation.customer_name }}</td>
+            <td>{{ reservation.get_status_display }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">Нет бронирований.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

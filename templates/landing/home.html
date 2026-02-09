@@ -1,0 +1,77 @@
+﻿{% extends "base.html" %}
+{% block content %}
+  <section class="hero">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <div class="eyebrow">Антикафе</div>
+        <h1 class="hero-title">{{ site_settings.site_name }}</h1>
+        <p class="lead">{{ site_settings.site_description }}</p>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <a class="btn btn-primary btn-lg" href="/booking/">Забронировать стол</a>
+          <a class="btn btn-outline-primary btn-lg" href="/contact/">Связаться</a>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <span class="badge-soft">Игры и компании</span>
+          <span class="badge-soft">Рабочие встречи</span>
+          <span class="badge-soft">Уютные вечера</span>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="hero-card">
+          <h5>Сегодня свободно</h5>
+          <p>Выберите дату и время, чтобы увидеть доступные столы и длительность. Система покажет лучшие слоты.</p>
+          <a class="btn btn-outline-primary" href="/booking/">Проверить доступность</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card h-100 p-3">
+          <h5 class="card-title">Игры</h5>
+          <p class="card-text">Каталог настольных игр для компаний любого размера.</p>
+          <a href="/games/" class="btn btn-outline-primary">Смотреть</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 p-3">
+          <h5 class="card-title">Меню</h5>
+          <p class="card-text">Напитки и лёгкие закуски для комфортных встреч.</p>
+          <a href="/products/" class="btn btn-outline-primary">Смотреть</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 p-3">
+          <h5 class="card-title">Связаться</h5>
+          <p class="card-text">Оставьте сообщение, мы быстро ответим и поможем.</p>
+          <a href="/contact/" class="btn btn-outline-primary">Контакты</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="soft-card p-3 h-100">
+          <h5>Атмосфера</h5>
+          <p>Тёплый свет, удобные зоны и приватные столы для компаний.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="soft-card p-3 h-100">
+          <h5>Гибкие слоты</h5>
+          <p>Выбирайте длительность визита и бронируйте онлайн за минуту.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="soft-card p-3 h-100">
+          <h5>Сервис</h5>
+          <p>Всегда на связи и помогаем подобрать формат мероприятия.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

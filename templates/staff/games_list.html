@@ -1,0 +1,31 @@
+﻿{% extends "staff/base_staff.html" %}
+{% block content %}
+  <section class="staff-shell">
+    <h1 class="page-title">Игры</h1>
+    <form method="post" enctype="multipart/form-data" class="vstack gap-2 mb-3">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Добавить</button>
+    </form>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Доступна</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for game in games %}
+          <tr>
+            <td>{{ game.title }}</td>
+            <td>{{ game.is_available }}</td>
+            <td><a class="btn btn-sm btn-outline-primary" href="/staff/catalog/games/{{ game.id }}/">Редактировать</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3">Нет игр.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}
