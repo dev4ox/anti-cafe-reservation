@@ -64,11 +64,9 @@ class Reservation(models.Model):
 
         settings = SiteSettings.get_solo()
         duration_choices = settings.slot_duration_choices or [60, 120, 180, 240]
-        # Проверяем, что длительность относится к разрешенным слотам.
         if self.duration_minutes not in duration_choices:
             raise ValidationError('Выбрана недоступная длительность.')
 
-        # Проверяем рабочие часы.
         window = get_working_window(self.date)
         if window is None:
             raise ValidationError('На выбранную дату бронирования не принимаются.')
@@ -77,11 +75,9 @@ class Reservation(models.Model):
         if self.start_time < open_time or end_time > close_time:
             raise ValidationError('Бронирование выходит за пределы рабочего времени.')
 
-        # Проверяем пересечения по времени для выбранного стола.
         if not is_table_available(self.table, self.date, self.start_time, end_time, exclude_id=self.id):
             raise ValidationError('Стол уже занят в это время.')
 
-        # Проверяем минимальное время предупреждения.
         now = timezone.localtime()
         reservation_dt = timezone.make_aware(datetime.combine(self.date, self.start_time), now.tzinfo)
         min_notice = timedelta(minutes=settings.min_notice_minutes)
@@ -91,7 +87,6 @@ class Reservation(models.Model):
     def save(self, *args, **kwargs):
         if not self.public_code:
             self.public_code = uuid.uuid4().hex[:12].upper()
-        # Важно сохранить вычисленное окончание, чтобы фильтровать пересечения быстро.
         self.end_time = compute_end_time(self.start_time, self.duration_minutes)
         self.full_clean()
         super().save(*args, **kwargs)

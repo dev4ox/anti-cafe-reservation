@@ -8,7 +8,7 @@ from django.utils import timezone
 from site_settings.models import SiteSettings
 
 from .constants import OCCUPYING_STATUSES
-from .utils import compute_end_time, get_working_window
+from .utils import get_working_window
 
 
 def is_table_available(table, date, start_time, end_time, exclude_id=None) -> bool:

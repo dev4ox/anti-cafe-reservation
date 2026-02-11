@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from django.contrib import messages
-from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 
 from integrations.telegram import send_telegram_message
 
@@ -12,10 +12,8 @@ from .models import Reservation
 from .notifications import send_email_ticket
 from .services import (
     find_available_start_times_for_table,
-    find_available_tables,
     find_available_tables_for_date,
 )
-from .utils import compute_end_time
 
 
 def booking_index(request):
@@ -118,9 +116,12 @@ def booking_create(request):
         ticket_url = request.build_absolute_uri(
             reverse('booking:ticket', kwargs={'public_code': reservation.public_code})
         )
-        send_email_ticket(reservation, ticket_url)
-        reservation.email_sent_at = timezone.now()
-        reservation.save(update_fields=['email_sent_at'])
+        email_sent = send_email_ticket(reservation, ticket_url)
+        if email_sent:
+            reservation.email_sent_at = timezone.now()
+            reservation.save(update_fields=['email_sent_at'])
+        else:
+            messages.warning(request, 'Письмо не отправлено. Проверьте настройки e-mail.')
 
         start_time = reservation.start_time.strftime('%H:%M')
         send_telegram_message(

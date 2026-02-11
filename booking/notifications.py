@@ -1,9 +1,13 @@
-from django.core.mail import send_mail
+import logging
+
+from django.core.mail import EmailMessage
 
 from site_settings.models import SiteSettings
 
+logger = logging.getLogger(__name__)
 
-def send_email_ticket(reservation, ticket_url):
+
+def send_email_ticket(reservation, ticket_url) -> bool:
     settings = SiteSettings.get_solo()
     start_time = reservation.start_time.strftime('%H:%M')
     subject = f'Бронирование в {settings.site_name} на {reservation.date} {start_time}'
@@ -24,11 +28,17 @@ def send_email_ticket(reservation, ticket_url):
         f'Ссылка на билет: {ticket_url}\n'
     )
 
-    send_mail(
+    reply_to = [settings.reply_to_email] if settings.reply_to_email else None
+    email = EmailMessage(
         subject=subject,
-        message=body,
+        body=body,
         from_email=settings.from_email or None,
-        recipient_list=[reservation.customer_email],
-        fail_silently=False,
-        reply_to=[settings.reply_to_email] if settings.reply_to_email else None,
+        to=[reservation.customer_email],
+        reply_to=reply_to,
     )
+    try:
+        email.send(fail_silently=False)
+    except Exception:
+        logger.exception('Failed to send email ticket for reservation %s', reservation.id)
+        return False
+    return True
