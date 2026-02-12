@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def send_email_ticket(reservation, ticket_url) -> bool:
+    """Отправляет письмо с билетом и сообщает об успехе."""
     settings = SiteSettings.get_solo()
     start_time = reservation.start_time.strftime('%H:%M')
     subject = f'Бронирование в {settings.site_name} на {reservation.date} {start_time}'

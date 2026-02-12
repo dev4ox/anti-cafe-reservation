@@ -13,6 +13,7 @@ STATUS_CHOICES = [
 
 
 class ContactMessage(models.Model):
+    """Модель входящего сообщения от клиента."""
     name = models.CharField('Имя', max_length=150)
     phone = models.CharField('Телефон', max_length=50)
     message = models.TextField('Сообщение')
@@ -20,9 +21,11 @@ class ContactMessage(models.Model):
     created_at = models.DateTimeField('Создано', auto_now_add=True)
 
     class Meta:
+        """Мета-настройки модели или формы."""
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
         ordering = ['-created_at']
 
     def __str__(self) -> str:
+        """Возвращает человекочитаемое строковое представление объекта."""
         return f'{self.name} {self.created_at:%Y-%m-%d}'

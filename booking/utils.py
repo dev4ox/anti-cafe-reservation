@@ -6,6 +6,7 @@ from site_settings.models import SpecialDay, WeeklySchedule
 
 
 def get_working_window(date):
+    """Возвращает рабочее окно на дату с учетом исключений."""
     special = SpecialDay.objects.filter(date=date).first()
     if special:
         if not special.is_open:
@@ -23,6 +24,7 @@ def get_working_window(date):
 
 
 def compute_end_time(start_time, duration_minutes):
+    """Вычисляет время окончания по началу и длительности."""
     start_dt = datetime.combine(timezone.localdate(), start_time)
     end_dt = start_dt + timedelta(minutes=duration_minutes)
     return end_dt.time()

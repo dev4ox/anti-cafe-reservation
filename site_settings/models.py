@@ -3,6 +3,7 @@ from django.db import models
 
 
 class SiteSettings(models.Model):
+    """Синглтон-настройки сайта и бронирования."""
     site_name = models.CharField('Название сайта', max_length=200)
     site_description = models.TextField('Описание сайта')
     address = models.CharField('Адрес', max_length=255)
@@ -39,18 +40,22 @@ class SiteSettings(models.Model):
     updated_at = models.DateTimeField('Обновлено', auto_now=True)
 
     class Meta:
+        """Мета-настройки модели или формы."""
         verbose_name = 'Настройки сайта'
         verbose_name_plural = 'Настройки сайта'
 
     def __str__(self) -> str:
+        """Возвращает человекочитаемое строковое представление объекта."""
         return 'Настройки сайта'
 
     @property
     def deposit_required(self) -> bool:
+        """Показывает, требуется ли депозит."""
         return self.deposit_amount > 0
 
     @classmethod
     def get_solo(cls) -> "SiteSettings":
+        """Возвращает единственный экземпляр настроек сайта."""
         settings = cls.objects.first()
         if settings:
             return settings
@@ -64,6 +69,7 @@ class SiteSettings(models.Model):
 
 
 class WeeklySchedule(models.Model):
+    """График работы по дням недели."""
     day_of_week = models.IntegerField(
         'День недели',
         unique=True,
@@ -74,14 +80,17 @@ class WeeklySchedule(models.Model):
     close_time = models.TimeField('Закрытие', null=True, blank=True)
 
     class Meta:
+        """Мета-настройки модели или формы."""
         verbose_name = 'График по неделе'
         verbose_name_plural = 'График по неделе'
         ordering = ['day_of_week']
 
     def __str__(self) -> str:
+        """Возвращает человекочитаемое строковое представление объекта."""
         return f'День {self.day_of_week}'
 
     def clean(self) -> None:
+        """Валидирует состояние объекта и выбрасывает ошибки при нарушении правил."""
         if self.is_open and (self.open_time is None or self.close_time is None):
             raise ValidationError('Для открытого дня нужно указать время работы.')
         if self.is_open and self.open_time and self.close_time and self.open_time >= self.close_time:
@@ -89,6 +98,7 @@ class WeeklySchedule(models.Model):
 
 
 class SpecialDay(models.Model):
+    """Исключение в расписании на конкретную дату."""
     date = models.DateField('Дата', unique=True)
     is_open = models.BooleanField('Открыто', default=True)
     open_time = models.TimeField('Открытие', null=True, blank=True)
@@ -96,14 +106,17 @@ class SpecialDay(models.Model):
     note = models.CharField('Примечание', max_length=255, blank=True)
 
     class Meta:
+        """Мета-настройки модели или формы."""
         verbose_name = 'Особый день'
         verbose_name_plural = 'Особые дни'
         ordering = ['date']
 
     def __str__(self) -> str:
+        """Возвращает человекочитаемое строковое представление объекта."""
         return self.date.isoformat()
 
     def clean(self) -> None:
+        """Валидирует состояние объекта и выбрасывает ошибки при нарушении правил."""
         if self.is_open and (self.open_time is None or self.close_time is None):
             raise ValidationError('Для открытого дня нужно указать время работы.')
         if self.is_open and self.open_time and self.close_time and self.open_time >= self.close_time:

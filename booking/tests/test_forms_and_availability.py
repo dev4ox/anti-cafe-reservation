@@ -11,7 +11,9 @@ from site_settings.models import SiteSettings, WeeklySchedule
 
 
 class BookingFormsAndAvailabilityTests(TestCase):
+    """Тесты форм и доступности слотов."""
     def setUp(self):
+        """Готовит тестовые данные для сценариев."""
         settings = SiteSettings.get_solo()
         settings.slot_duration_choices = [60, 120]
         settings.min_notice_minutes = 0
@@ -38,11 +40,13 @@ class BookingFormsAndAvailabilityTests(TestCase):
         self.table_large = Table.objects.create(name="T2", capacity=4, is_active=True)
 
     def test_booking_availability_form_uses_settings_choices(self):
+        """Проверяет сценарий: booking availability form uses settings choices."""
         form = BookingAvailabilityForm()
         choices = [int(value) for value, _ in form.fields['duration_minutes'].choices]
         self.assertEqual(choices, [60, 120])
 
     def test_reservation_form_limits_tables_by_availability(self):
+        """Проверяет сценарий: reservation form limits tables by availability."""
         Reservation.objects.create(
             table=self.table_large,
             date=self.date,
@@ -63,6 +67,7 @@ class BookingFormsAndAvailabilityTests(TestCase):
         self.assertEqual(table_ids, [self.table_small.id])
 
     def test_find_available_start_times_respects_existing_reservation(self):
+        """Проверяет сценарий: find available start times respects existing reservation."""
         Reservation.objects.create(
             table=self.table_large,
             date=self.date,

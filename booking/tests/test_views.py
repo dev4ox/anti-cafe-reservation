@@ -10,7 +10,9 @@ from site_settings.models import SiteSettings, WeeklySchedule
 
 
 class BookingViewsTests(TestCase):
+    """Тесты публичных представлений бронирования."""
     def setUp(self):
+        """Готовит тестовые данные для сценариев."""
         settings = SiteSettings.get_solo()
         settings.slot_duration_choices = [60, 120]
         settings.min_notice_minutes = 0
@@ -36,6 +38,7 @@ class BookingViewsTests(TestCase):
         self.table = Table.objects.create(name="T1", capacity=4, is_active=True)
 
     def test_booking_index_shows_available_tables(self):
+        """Проверяет сценарий: booking index shows available tables."""
         response = self.client.get(
             '/booking/',
             {
@@ -49,6 +52,7 @@ class BookingViewsTests(TestCase):
         self.assertEqual([t.id for t in available_tables], [self.table.id])
 
     def test_booking_create_creates_reservation_and_redirects(self):
+        """Проверяет сценарий: booking create creates reservation and redirects."""
         response = self.client.post(
             '/booking/new/',
             {
@@ -68,6 +72,7 @@ class BookingViewsTests(TestCase):
         self.assertIsNotNone(reservation.email_sent_at)
 
     def test_booking_create_email_failure_warns_and_skips_sent_at(self):
+        """Проверяет сценарий: booking create email failure warns and skips sent at."""
         with patch('booking.views.send_email_ticket', return_value=False):
             response = self.client.post(
                 '/booking/new/',

@@ -12,6 +12,7 @@ from .utils import get_working_window
 
 
 def is_table_available(table, date, start_time, end_time, exclude_id=None) -> bool:
+    """Проверяет, свободен ли стол в указанный интервал."""
     Reservation = apps.get_model('booking', 'Reservation')
     qs = Reservation.objects.filter(
         table=table,
@@ -26,12 +27,14 @@ def is_table_available(table, date, start_time, end_time, exclude_id=None) -> bo
 
 
 def find_available_tables(date, start_time, end_time, seats) -> Iterable:
+    """Возвращает доступные столы для выбранного времени."""
     Table = apps.get_model('booking', 'Table')
     tables = Table.objects.filter(is_active=True, capacity__gte=seats).order_by('capacity', 'name')
     return [table for table in tables if is_table_available(table, date, start_time, end_time)]
 
 
 def find_available_start_times(date, duration_minutes, seats, step_minutes=30):
+    """Находит доступные времена начала для даты."""
     window = get_working_window(date)
     if window is None:
         return []
@@ -65,6 +68,7 @@ def find_available_start_times(date, duration_minutes, seats, step_minutes=30):
 
 
 def find_available_tables_for_date(date, duration_minutes, seats, step_minutes=30):
+    """Возвращает список доступных столов в течение дня."""
     window = get_working_window(date)
     if window is None:
         return []
@@ -96,6 +100,7 @@ def find_available_tables_for_date(date, duration_minutes, seats, step_minutes=3
 
 
 def find_available_start_times_for_table(date, duration_minutes, seats, table, step_minutes=30):
+    """Находит доступные времена для выбранного стола."""
     window = get_working_window(date)
     if window is None:
         return []

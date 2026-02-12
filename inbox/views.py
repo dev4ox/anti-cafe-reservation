@@ -7,6 +7,7 @@ from .forms import ContactForm
 
 
 def contact(request):
+    """Обрабатывает страницу контактов и сохраняет сообщения клиентов."""
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():

@@ -22,9 +22,11 @@ from site_settings.models import SiteSettings, SpecialDay, WeeklySchedule
 
 
 class Command(BaseCommand):
+    """Команда для заполнения демо-данных."""
     help = "Seed demo data for local development."
 
     def add_arguments(self, parser):
+        """Добавляет аргументы командной строки для генерации демо-данных."""
         parser.add_argument(
             "--reset",
             action="store_true",
@@ -65,6 +67,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        """Генерирует демо-набор данных для локальной разработки."""
         if options["reset"]:
             Reservation.objects.all().delete()
             Table.objects.all().delete()
@@ -78,6 +81,7 @@ class Command(BaseCommand):
         only = options["only"].strip().lower()
 
         def wants(section):
+            """Определяет, нужно ли заполнять выбранный раздел."""
             return only == "all" or only == section
 
         settings = SiteSettings.get_solo()
@@ -206,6 +210,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Demo data seeded."))
 
     def _seed_reservations(self, tables, days, big, realistic):
+        """Создает демо-бронирования с разными датами и статусами."""
         durations = [60, 120, 180]
         statuses = [STATUS_NEW, STATUS_CONFIRMED, STATUS_COMPLETED, STATUS_CANCELLED, STATUS_NO_SHOW]
         start_times = [time(11, 0), time(13, 0), time(15, 0), time(18, 0), time(20, 0)]

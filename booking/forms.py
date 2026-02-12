@@ -9,11 +9,13 @@ from .utils import compute_end_time
 
 
 class BookingAvailabilityForm(forms.Form):
+    """Форма выбора даты и параметров бронирования."""
     date = forms.DateField(label='Дата', widget=forms.DateInput(attrs={'type': 'date'}))
     duration_minutes = forms.ChoiceField(label='Длительность (мин.)')
     seats = forms.IntegerField(label='Мест')
 
     def __init__(self, *args, **kwargs):
+        """Инициализирует форму и применяет ограничения полей."""
         super().__init__(*args, **kwargs)
         settings = SiteSettings.get_solo()
         duration_choices = settings.slot_duration_choices or [60, 120, 180, 240]
@@ -27,6 +29,7 @@ class BookingAvailabilityForm(forms.Form):
         self.fields['seats'].widget.attrs['max'] = max_value
 
     def clean_duration_minutes(self):
+        """Проверяет выбранную длительность слота."""
         duration = int(self.cleaned_data['duration_minutes'])
         settings = SiteSettings.get_solo()
         if settings.slot_duration_choices and duration not in settings.slot_duration_choices:
@@ -35,7 +38,9 @@ class BookingAvailabilityForm(forms.Form):
 
 
 class ReservationForm(forms.ModelForm):
+    """Форма создания бронирования."""
     class Meta:
+        """Мета-настройки модели или формы."""
         model = Reservation
         fields = [
             'table',
@@ -53,6 +58,7 @@ class ReservationForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """Инициализирует форму и применяет ограничения полей."""
         date = kwargs.pop('date', None)
         start_time = kwargs.pop('start_time', None)
         duration_minutes = kwargs.pop('duration_minutes', None)

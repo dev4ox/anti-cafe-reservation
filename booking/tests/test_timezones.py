@@ -10,7 +10,9 @@ from site_settings.models import SiteSettings, WeeklySchedule
 
 
 class BookingTimezoneTests(TestCase):
+    """Тесты корректности работы с часовыми поясами."""
     def setUp(self):
+        """Готовит тестовые данные для сценариев."""
         settings = SiteSettings.get_solo()
         settings.slot_duration_choices = [60, 120, 180]
         settings.min_notice_minutes = 0
@@ -33,11 +35,13 @@ class BookingTimezoneTests(TestCase):
         self.table = Table.objects.create(name="T1", capacity=4, is_active=True)
 
     def test_find_available_start_times_aware(self):
+        """Проверяет сценарий: find available start times aware."""
         date = timezone.localdate()
         times = find_available_start_times(date, 60, 2)
         self.assertTrue(times)
 
     def test_reservation_clean_aware(self):
+        """Проверяет сценарий: reservation clean aware."""
         date = timezone.localdate() + timedelta(days=1)
         reservation = Reservation(
             table=self.table,

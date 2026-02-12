@@ -24,11 +24,13 @@ from .forms import (
 
 
 def staff_required(view):
+    """Ограничивает доступ к представлению только для сотрудников."""
     return login_required(user_passes_test(lambda u: u.is_staff)(view))
 
 
 @staff_required
 def dashboard(request):
+    """Показывает дашборд с бронями на сегодня."""
     today = date_cls.today()
     reservations = Reservation.objects.filter(date=today).order_by('start_time')
     return render(request, 'staff/dashboard.html', {'reservations': reservations, 'today': today})
@@ -36,6 +38,7 @@ def dashboard(request):
 
 @staff_required
 def reservations_list(request):
+    """Показывает список броней с фильтрами."""
     selected_date = request.GET.get('date') or date_cls.today().isoformat()
     status = request.GET.get('status')
     reservations = Reservation.objects.filter(date=selected_date)
@@ -55,6 +58,7 @@ def reservations_list(request):
 
 @staff_required
 def reservation_status(request, reservation_id):
+    """Обновляет статус брони и отправляет уведомление."""
     reservation = get_object_or_404(Reservation, id=reservation_id)
     if request.method == 'POST':
         form = ReservationStatusForm(request.POST, instance=reservation)
@@ -69,6 +73,7 @@ def reservation_status(request, reservation_id):
 
 @staff_required
 def table_list(request):
+    """Показывает список столов и форму добавления."""
     tables = Table.objects.all().order_by('name')
     form = TableForm()
     if request.method == 'POST':
@@ -82,6 +87,7 @@ def table_list(request):
 
 @staff_required
 def table_edit(request, table_id):
+    """Редактирует параметры стола."""
     table = get_object_or_404(Table, id=table_id)
     form = TableForm(request.POST or None, instance=table)
     if request.method == 'POST' and form.is_valid():
@@ -93,12 +99,14 @@ def table_edit(request, table_id):
 
 @staff_required
 def messages_list(request):
+    """Показывает список сообщений клиентов."""
     messages_list = ContactMessage.objects.all()
     return render(request, 'staff/messages_list.html', {'messages_list': messages_list})
 
 
 @staff_required
 def games_list(request):
+    """Показывает список настольных игр в админке."""
     games = BoardGame.objects.all().order_by('title')
     form = BoardGameForm()
     if request.method == 'POST':
@@ -112,6 +120,7 @@ def games_list(request):
 
 @staff_required
 def game_edit(request, game_id):
+    """Редактирует настольную игру в админке."""
     game = get_object_or_404(BoardGame, id=game_id)
     form = BoardGameForm(request.POST or None, request.FILES or None, instance=game)
     if request.method == 'POST' and form.is_valid():
@@ -123,6 +132,7 @@ def game_edit(request, game_id):
 
 @staff_required
 def products_list(request):
+    """Показывает список продуктов в админке."""
     products = Product.objects.all().order_by('title')
     form = ProductForm()
     if request.method == 'POST':
@@ -136,6 +146,7 @@ def products_list(request):
 
 @staff_required
 def product_edit(request, product_id):
+    """Редактирует продукт в админке."""
     product = get_object_or_404(Product, id=product_id)
     form = ProductForm(request.POST or None, request.FILES or None, instance=product)
     if request.method == 'POST' and form.is_valid():
@@ -147,6 +158,7 @@ def product_edit(request, product_id):
 
 @staff_required
 def settings_view(request):
+    """Показывает и сохраняет настройки сайта."""
     settings = SiteSettings.get_solo()
     form = SiteSettingsForm(request.POST or None, request.FILES or None, instance=settings)
     if request.method == 'POST' and form.is_valid():
@@ -165,6 +177,7 @@ def settings_view(request):
 
 @staff_required
 def weekly_schedule_create(request):
+    """Создает запись недельного расписания."""
     form = WeeklyScheduleForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
@@ -175,6 +188,7 @@ def weekly_schedule_create(request):
 
 @staff_required
 def special_day_create(request):
+    """Создает запись особого дня."""
     form = SpecialDayForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
@@ -185,6 +199,7 @@ def special_day_create(request):
 
 @staff_required
 def manual_booking(request):
+    """Создает бронь из панели персонала."""
     form = ReservationForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         form.save()

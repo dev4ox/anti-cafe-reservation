@@ -17,6 +17,7 @@ from .services import (
 
 
 def booking_index(request):
+    """Показывает страницу выбора даты и доступности столов."""
     availability_form = BookingAvailabilityForm(request.GET or None)
     reservation_form = None
     available_times = []
@@ -107,6 +108,7 @@ def booking_index(request):
 
 
 def booking_create(request):
+    """Создает бронирование по форме и отправляет уведомления."""
     if request.method != 'POST':
         return redirect('booking:index')
 
@@ -179,9 +181,11 @@ def booking_create(request):
 
 
 def booking_success(request):
+    """Показывает страницу успешного бронирования."""
     return render(request, 'booking/success.html')
 
 
 def booking_ticket(request, public_code):
+    """Показывает публичный билет по коду."""
     reservation = get_object_or_404(Reservation, public_code=public_code)
     return render(request, 'booking/ticket.html', {'reservation': reservation})

@@ -13,20 +13,24 @@ from .utils import compute_end_time, get_working_window
 
 
 class Table(models.Model):
+    """Модель стола с вместимостью и состоянием."""
     name = models.CharField('Название', max_length=100)
     capacity = models.PositiveIntegerField('Вместимость')
     is_active = models.BooleanField('Активен', default=True)
     location_note = models.CharField('Примечание', max_length=255, blank=True)
 
     class Meta:
+        """Мета-настройки модели или формы."""
         verbose_name = 'Стол'
         verbose_name_plural = 'Столы'
 
     def __str__(self) -> str:
+        """Возвращает человекочитаемое строковое представление объекта."""
         return self.name
 
 
 class Reservation(models.Model):
+    """Модель бронирования стола с временем и статусом."""
     table = models.ForeignKey(Table, on_delete=models.PROTECT, related_name='reservations')
     date = models.DateField('Дата')
     start_time = models.TimeField('Начало')
@@ -46,6 +50,7 @@ class Reservation(models.Model):
     updated_at = models.DateTimeField('Обновлено', auto_now=True)
 
     class Meta:
+        """Мета-настройки модели или формы."""
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
         indexes = [
@@ -54,9 +59,11 @@ class Reservation(models.Model):
         ]
 
     def __str__(self) -> str:
+        """Возвращает человекочитаемое строковое представление объекта."""
         return f'{self.date} {self.start_time} {self.table}'
 
     def clean(self) -> None:
+        """Валидирует состояние объекта и выбрасывает ошибки при нарушении правил."""
         if not self.table.is_active:
             raise ValidationError('Стол неактивен и не может быть забронирован.')
         if self.seats > self.table.capacity:
@@ -85,6 +92,7 @@ class Reservation(models.Model):
             raise ValidationError('Слишком поздно для бронирования на это время.')
 
     def save(self, *args, **kwargs):
+        """Сохраняет объект, предварительно выполняя вычисления и валидацию."""
         if not self.public_code:
             self.public_code = uuid.uuid4().hex[:12].upper()
         self.end_time = compute_end_time(self.start_time, self.duration_minutes)

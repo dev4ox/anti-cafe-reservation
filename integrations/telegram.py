@@ -5,6 +5,7 @@ from site_settings.models import SiteSettings
 
 
 def send_telegram_message(text: str) -> None:
+    """Отправляет уведомление в Telegram при включенной интеграции."""
     settings = SiteSettings.get_solo()
     if not settings.tg_enabled:
         return

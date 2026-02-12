@@ -5,6 +5,7 @@ from .models import SiteSettings, SpecialDay, WeeklySchedule
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
+    """Админ-конфигурация для настроек сайта."""
     fieldsets = (
         ('Основное', {'fields': ('site_name', 'site_description', 'address', 'phone', 'logo')}),
         ('SEO', {'fields': ('meta_title', 'meta_description', 'og_image')}),
@@ -14,16 +15,19 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     )
 
     def has_add_permission(self, request):
+        """Запрещает создание второго набора настроек."""
         return not SiteSettings.objects.exists()
 
 
 @admin.register(WeeklySchedule)
 class WeeklyScheduleAdmin(admin.ModelAdmin):
+    """Админ-конфигурация для недельного графика."""
     list_display = ('day_of_week', 'is_open', 'open_time', 'close_time')
     list_editable = ('is_open', 'open_time', 'close_time')
 
 
 @admin.register(SpecialDay)
 class SpecialDayAdmin(admin.ModelAdmin):
+    """Админ-конфигурация для особых дней."""
     list_display = ('date', 'is_open', 'open_time', 'close_time', 'note')
     list_editable = ('is_open', 'open_time', 'close_time', 'note')

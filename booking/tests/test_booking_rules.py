@@ -10,7 +10,9 @@ from site_settings.models import SiteSettings, WeeklySchedule
 
 
 class BookingRulesTests(TestCase):
+    """Тесты бизнес-правил бронирования."""
     def setUp(self):
+        """Готовит тестовые данные для сценариев."""
         settings = SiteSettings.get_solo()
         settings.slot_duration_choices = [60, 120]
         settings.min_notice_minutes = 0
@@ -35,6 +37,7 @@ class BookingRulesTests(TestCase):
         self.table = Table.objects.create(name="T1", capacity=4, is_active=True)
 
     def test_reservation_rejects_outside_working_hours(self):
+        """Проверяет сценарий: reservation rejects outside working hours."""
         date = timezone.localdate() + timedelta(days=1)
         reservation = Reservation(
             table=self.table,
@@ -50,6 +53,7 @@ class BookingRulesTests(TestCase):
             reservation.full_clean()
 
     def test_reservation_rejects_seats_over_capacity(self):
+        """Проверяет сценарий: reservation rejects seats over capacity."""
         date = timezone.localdate() + timedelta(days=1)
         reservation = Reservation(
             table=self.table,
@@ -65,6 +69,7 @@ class BookingRulesTests(TestCase):
             reservation.full_clean()
 
     def test_reservation_overlap_rejected(self):
+        """Проверяет сценарий: reservation overlap rejected."""
         date = timezone.localdate() + timedelta(days=1)
         Reservation.objects.create(
             table=self.table,
@@ -90,6 +95,7 @@ class BookingRulesTests(TestCase):
             reservation.full_clean()
 
     def test_reservation_respects_min_notice(self):
+        """Проверяет сценарий: reservation respects min notice."""
         settings = SiteSettings.get_solo()
         settings.min_notice_minutes = 120
         settings.save()
