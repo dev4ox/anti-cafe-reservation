@@ -26,7 +26,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2) Создать базу данных и пользователя PostgreSQL
+### 2) Создать базу данных и пользователя PostgreSQL (подробно, для начинающих)
 По умолчанию проект ожидает следующие параметры (см. `anti_cafe_reservation/settings.py`):
 - DB: `anti_cafe_reservation`
 - USER: `anti_cafe`
@@ -34,13 +34,49 @@ pip install -r requirements.txt
 - HOST: `localhost`
 - PORT: `5432`
 
-Создать пользователя и БД:
+#### 2.1 Войти в psql под суперпользователем
+Если PostgreSQL установлен локально, обычно доступен пользователь `postgres`.
 ```powershell
-psql -U postgres -c "CREATE USER anti_cafe WITH PASSWORD 'anti_cafe';"
-psql -U postgres -c "CREATE DATABASE anti_cafe_reservation OWNER anti_cafe;"
+psql -U postgres
 ```
 
-Если вы хотите использовать другие параметры, измените их в
+Если вход выполнен, вы увидите приглашение вида `postgres=#`.
+
+#### 2.2 Создать пользователя (роль)
+```sql
+CREATE USER anti_cafe WITH PASSWORD 'anti_cafe';
+```
+
+#### 2.3 Создать базу данных и назначить владельца
+```sql
+CREATE DATABASE anti_cafe_reservation OWNER anti_cafe;
+```
+
+#### 2.4 Выдать привилегии пользователю (рекомендуется)
+```sql
+GRANT ALL PRIVILEGES ON DATABASE anti_cafe_reservation TO anti_cafe;
+```
+
+Подключиться к созданной БД и выдать права на схему `public`:
+```sql
+\c anti_cafe_reservation
+GRANT ALL ON SCHEMA public TO anti_cafe;
+```
+
+Если планируется, что пользователь будет создавать таблицы (миграции), можно
+назначить права по умолчанию:
+```sql
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anti_cafe;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anti_cafe;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO anti_cafe;
+```
+
+Выйти из psql:
+```sql
+\q
+```
+
+Если вы хотите использовать другие параметры подключения, измените их в
 `anti_cafe_reservation/settings.py`.
 
 ### 3) Применить миграции
